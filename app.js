@@ -3,20 +3,36 @@ const express = require('express')
 const app = express()
 const port = 3000
 
+const exphbs = require('express-handlebars')
+
+app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
+app.set('view engine', 'hbs')
+
+app.use(express.urlencoded({ extended: true }))
+
+const logRequest = require('./tools/logRequest')
+app.use(logRequest)
+
+const logs = []
+
 app.get('/', (req, res) => {
-  res.send('列出全部 Todo')
+  logs.unshift(res.locals.logs)
+  res.render('index', logs)
 })
 
 app.get('/new', (req, res) => {
-  res.send('新增 Todo 頁面')
+  logs.unshift(res.locals.logs)
+  res.render('index', logs)
 })
 
 app.get('/:id', (req, res) => {
-  res.send('顯示一筆 Todo')
+  logs.unshift(res.locals.logs)
+  res.render('index', logs)
 })
 
 app.post('/', (req, res) => {
-  res.send('新增一筆  Todo')
+  logs.unshift(res.locals.logs)
+  res.render('index', logs)
 })
 
 app.listen(port, () => {
